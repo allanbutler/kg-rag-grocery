@@ -1,0 +1,102 @@
+variables:
+  POETRY_ROOT: "$CI_PROJECT_DIR/.poetry"
+
+
+.only-default: &only-default
+    only:
+        - main
+        - master
+        - merge_requests
+        - tags
+        - branches
+    before_script:
+        - apt-get update
+        - export HOME="${CI_PROJECT_DIR}" # we do this to ensure that the docker image hasn't set the $HOME variable to something weird
+        - apt-get update
+        - apt-get -y install make curl libbz2-dev libssl-dev libffi-dev git gcc build-essential zlib1g-dev libsqlite3-dev
+        - pip install -U pip poetry -qq
+        - poetry config virtualenvs.in-project true
+
+include:
+  - project: 'heb-engineering/projects/gitlab-ci/templates'
+    ref: master
+    file: '/security/common.gitlab-ci.yml'
+
+image: python:3.12.2
+
+stages:
+  - static analysis
+  - test
+  - build
+  - publish
+  # - deploy # Enable autodocumentation post setup in docs/
+
+lint:
+    stage: static analysis
+    image: python:3.12.2
+    script:
+    - make install-dev
+    - make lint-check
+    <<: *only-default
+
+check-types:
+    stage: static analysis
+    image: python:3.12.2
+    script:
+    - make install
+    - make check-types
+    <<: *only-default
+
+unittest:
+    stage: test
+    script:
+        - make install
+        - make unittest
+    <<: *only-default
+
+#coverage:
+#    stage: test
+#    script:
+#        - make coverage
+#    <<: *only-default
+
+build-package:
+  stage: build
+  image: python:3.12.2
+  script:
+    - make install
+    - make build-whl
+  <<: *only-default
+  only:
+    - tags
+  artifacts:
+    paths:
+      - dist/*.*
+
+push-package:
+  stage: publish
+  image: python:3.12.2
+  script:
+    - echo "Packaging is being done"
+    - ls -lart
+    - pip install twine
+    - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token python -m twine upload --verbose --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/* --config-file .pypirc 
+  <<: *only-default
+  only:
+    - tags
+
+# Uncomment this only after following autodocumentation setup on 
+# https://hebecom.atlassian.net/wiki/spaces/DSCOE/pages/3697150194/Integration+of+Autodocumentation+into+mldev-template+using+MKDocs
+# pages: 
+#   stage: deploy
+#   script:
+#     - pip install mkdocs mkdocs-material mkdocstrings # Replace this with poetry based setup if required
+#     #- pip3 install poetry
+#     #- poetry install --with docs
+#     - mkdocs build --site-dir public
+#     #- poetry run mkdocs build --site-dir public --verbose
+#   artifacts:
+#     paths:
+#       - public
+#   only:
+#     - main
