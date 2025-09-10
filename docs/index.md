@@ -10,6 +10,7 @@ ensuring up-to-date and accurate information for all users and contributors.
 ## Quickstart
 ```bash
 poetry install
+poetry shell
 poetry run python -m sgs prepare-data
 poetry run python -m sgs run-server
 # in another terminal:
