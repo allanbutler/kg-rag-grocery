@@ -4,3 +4,13 @@ Smart Grocery Search is a demo project that combines vector search, knowledge gr
 
 This documentation is designed to evolve alongside the smart-grocery-search project,
 ensuring up-to-date and accurate information for all users and contributors.
+
+# Smart Grocery Search (KG-RAG + DSPy)
+
+## Quickstart
+```bash
+poetry install
+poetry run python -m sgs prepare-data
+poetry run python -m sgs run-server
+# in another terminal:
+curl 'http://127.0.0.1:8000/search?q=nut-free%20granola'

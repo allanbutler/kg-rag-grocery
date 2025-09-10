@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+curl 'http://127.0.0.1:8000/search?q=nut-free%20granola'
