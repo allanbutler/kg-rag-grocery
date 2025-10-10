@@ -4,6 +4,8 @@ Problem:
 
 In modern grocery retail, customers expect search experiences that are fast, relevant, and personalized. If you search for “nut-free granola under $5”, a typical keyword search fail because it doesn’t understand “nut-free” as an attribute and it might pull any “granola” regardless of price.
 
+[docs/granola_search.png]
+
 This highlights three core challenges:
 
 Multi-attribute complexity
