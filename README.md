@@ -87,6 +87,8 @@ Architecture:
 
 The architecture integrates structured reasoning from a Knowledge Graph (KG) with semantic recall from vector retrieval, orchestrated through a declarative DSPy pipeline. Product data from the grocery catalog (brand, category, nutrition, labels, and price) is ingested into the KG, where it is linked to attributes and relationships such as HAS_ATTRIBUTE or IN_CATEGORY. At query time, a customer request is decomposed into both free-text (e.g., product names or descriptions) and structured constraints (e.g., nut-free, price < $5). The KG enforces attribute and numeric filters, while embeddings capture broader semantic matches. Candidate products retrieved from both channels are passed to the LLM layer, where DSPy coordinates hybrid reasoning and explanation. This final stage produces not only ranked recommendations but also explicit justifications (e.g., “recommended because it is granola, tagged nut-free, and priced under $5”), ensuring transparency and trust in the system.
 
+![RAG Flow](docs/rag_flow.png)
+
 Sample grocery dataset:
 
 product_id,name,brand,category,sub_category,price,ingredients,attributes
