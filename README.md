@@ -71,6 +71,7 @@ Programs: orchestrate hybrid retrieval + answer generation.
 
 For example, a product search task can be expressed in just a few lines:
 
+```python
 import dspy
 
 class ProductSearchSignature(dspy.Signature):
@@ -78,6 +79,7 @@ class ProductSearchSignature(dspy.Signature):
     query: str
     hybrid_context: list[str]
     suggestions: str
+```
 
 With this declaration, DSPy automatically generates the right prompts behind the scenes. That means pipelines stay modular, explainable, and easier to maintain. You focus on what needs to happen (semantic + graph retrieval, ranking, explanation), not on how to hack together prompts.
 
@@ -91,10 +93,12 @@ The architecture integrates structured reasoning from a Knowledge Graph (KG) wit
 
 Sample grocery dataset:
 
+```
 product_id,name,brand,category,sub_category,price,ingredients,attributes
 1,HEB Oats & Honey Granola,H-E-B,Pantry,Cereal & Granola,4.49,"Whole grain oats,honey,almonds","contains_nuts;vegetarian"
 2,Central Market Organic Granola Low Sugar,Central Market,Pantry,Cereal & Granola,5.99,"Oats,coconut,chia,monk fruit","organic;low_sugar;vegan"
 ...
+```
 
 Vector Store (FAISS + Embeddings):
 
@@ -104,6 +108,7 @@ For grocery search, embeddings help generalize semantically (“granola” ≈ �
 
 We use SentenceTransformers + FAISS to encode product text (name, brand, category, attributes, nutrition).
 
+```python
 from sentence_transformers import SentenceTransformer
 import faiss
 
@@ -111,11 +116,13 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 embs = model.encode(product_texts, normalize_embeddings=True)
 index = faiss.IndexFlatIP(embs.shape[1])
 index.add(embs.astype("float32"))
+```
 
 Knowledge Graph Representation:
 
 We also ingest the dataset into a KG for explicit reasoning:
 
+```python
 import networkx as nx
 
 G = nx.Graph()
@@ -125,6 +132,7 @@ for _, r in df.iterrows():
     # Link to category + attributes
     G.add_node(f"attr:{r.attributes}", label="Attribute")
     G.add_edge(pid, f"attr:{r.attributes}", type="HAS_ATTRIBUTE")
+```
 
 This allows us to query structured relationships.
 
@@ -138,10 +146,12 @@ Expand candidates using KG neighbors (attributes, categories, ingredients).
 
 Merge into a hybrid context.
 
+```python
 vec_results = vector_search(query, k=6)
 kg_results = kg_search(query, k=6)
 
 context_texts = [r["text"] for r in vec_results + kg_results]
+```
 
 The LLM now sees semantic hits + structured facts.
 
@@ -149,6 +159,7 @@ DSPy Pipeline:
 
 We define DSPy for search & answering:
 
+```python
 class ProductSearchSignature(dspy.Signature):
     query: str
     hybrid_context: list[str]
@@ -164,6 +175,7 @@ class HybridSearchProgram(dspy.Module):
         context = [r["text"] for r in vec + kg]
         pred = self.search_llm(query=query, hybrid_context=context)
         return pred.suggestions
+```
 
 HybridSearchProgram merges vector + KG retrieval.
 
@@ -203,6 +215,7 @@ For grocery retail, where discovery often hinges on nuanced attributes like orga
 
 How to Try It: 
 
+```
 Clone the repo (Gitlab link here).
 
 poetry install
@@ -214,6 +227,7 @@ poetry run python -m sgs prepare-data → builds KG + FAISS index.
 poetry run python -m sgs run-server → starts API.
 
 curl 'http://127.0.0.1:8000/search?q=nut-free%granola'
+```
 
 Sources:
 
