@@ -39,9 +39,9 @@ This approach extends the familiar Retrieval-Augmented Generation (RAG) pattern.
 
 Why Knowledge Graph RAG?
 
-A grocery product is not just a row in a table, it’s better understood as a node in a network of relationships. Take something as simple as granola. It isn’t defined only by its name, it’s linked to a brand like H-E-B or Central Market, placed within a category such as Pantry → Granola, associated with ingredients like oats or almonds, described by attributes like nut-free or gluten-free, and tied to price metadata that could reflect everyday low price, promotions, or coupon eligibility.
+A grocery product is not just a row in a table, it’s better understood as a node in a network of relationships. Take something as simple as granola. It isn’t defined only by its name, it’s linked to a brand, placed within a category such as Pantry → Granola, associated with ingredients like oats or almonds, described by attributes like nut-free or gluten-free, and tied to price metadata that could reflect everyday low price, promotions, or coupon eligibility.
 
-This web of connections is what a Knowledge Graph (KG) captures. In a KG, edges describe meaning: a product HAS_ATTRIBUTE Nut-Free, IN_CATEGORY Granola, or MADE_BY H-E-B. That structure gives us more than just labels, it encodes the logic of how grocery items relate to one another.
+This web of connections is what a Knowledge Graph (KG) captures. In a KG, edges describe meaning: a product HAS_ATTRIBUTE Nut-Free, IN_CATEGORY Granola, or MADE_BY brand. That structure gives us more than just labels, it encodes the logic of how grocery items relate to one another.
 
 Compare that to a Classic RAG pipeline: 
 
@@ -49,9 +49,9 @@ Search → Embedding → Vector DB → Retrieved Docs → LLM answers.
 
 This flow works well when the goal is retrieving unstructured text — FAQs, policy documents, articles. But it breaks down in retail search. Embeddings can tell us that “granola” is semantically similar to “cereal.” What they can’t do reliably is enforce constraints like “must be nut-free,” “price under $5,” or “belongs in the Pantry category.” And those are exactly the rules shoppers care about.
 
-Imagine a customer in Texas searching H-E-B Digital for “organic salsa under $4.” That query carries intent across multiple structured dimensions at once: a dietary attribute, a category, and a numeric filter. A vector-only search may capture the gist of “salsa,” but it often drops the fine-grained conditions that make the result meaningful.
+Imagine a customer in Texas searching for “organic salsa under $4.” That query carries intent across multiple structured dimensions at once: a dietary attribute, a category, and a numeric filter. A vector-only search may capture the gist of “salsa,” but it often drops the fine-grained conditions that make the result meaningful.
 
-This is why Knowledge Graph RAG matters. It blends the semantic flexibility of embeddings with the structured precision of graph reasoning. In practice, that means a product like H-E-B Nut-Free Crunch Granola ($4.79) is represented not just by text embeddings but by explicit graph links to its attributes, category, brand, and price. When retrieved, the system can explain itself:
+This is why Knowledge Graph RAG matters. It blends the semantic flexibility of embeddings with the structured precision of graph reasoning. In practice, that means a product like Nut-Free Crunch Granola ($4.79) is represented not just by text embeddings but by explicit graph links to its attributes, category, brand, and price. When retrieved, the system can explain itself:
 
 “Recommended because it’s granola, tagged nut-free, and priced under $5.”
 
@@ -95,7 +95,7 @@ Sample grocery dataset:
 
 ```
 product_id,name,brand,category,sub_category,price,ingredients,attributes
-1,HEB Oats & Honey Granola,H-E-B,Pantry,Cereal & Granola,4.49,"Whole grain oats,honey,almonds","contains_nuts;vegetarian"
+1,HEB Oats & Honey Granola,Pantry,Cereal & Granola,4.49,"Whole grain oats,honey,almonds","contains_nuts;vegetarian"
 2,Central Market Organic Granola Low Sugar,Central Market,Pantry,Cereal & Granola,5.99,"Oats,coconut,chia,monk fruit","organic;low_sugar;vegan"
 ...
 ```
@@ -189,7 +189,7 @@ Vector Search finds granola products.
 
 KG filters for attribute = nut-free and price < 5.
 
-Result: H-E-B Nut-Free Crunch Granola ($4.79).
+Result: Nut-Free Crunch Granola ($4.79).
 
 Explainability: Why Did This Product Rank?
 
@@ -211,7 +211,7 @@ Explainable – recommendations are transparent and auditable, enabling both sho
 
 Maintainable – the declarative design simplifies extension and long-term support.
 
-For grocery retail, where discovery often hinges on nuanced attributes like organic, nut-free, or low sodium, this hybrid approach unlocks a better discovery. It means customers can find exactly what they need, with confidence, while H-E-B can deliver on the promise of “Here Everything’s Better” in the digital space as well. And with DSPy, the pipeline stays clean, modular, and transparent.
+For grocery retail, where discovery often hinges on nuanced attributes like organic, nut-free, or low sodium, this hybrid approach unlocks a better discovery. It means customers can find exactly what they need, with confidence, while the retailer delivers on the promise of a more personlized and helpful digital experience And with DSPy, the pipeline stays clean, modular, and transparent.
 
 How to Try It: 
 
