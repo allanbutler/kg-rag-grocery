@@ -96,7 +96,7 @@ Sample grocery dataset:
 ```
 product_id,name,brand,category,sub_category,price,ingredients,attributes
 1,Oats & Honey Granola,Pantry,Cereal & Granola,4.49,"Whole grain oats,honey,almonds","contains_nuts;vegetarian"
-2,Central Market Organic Granola Low Sugar,Central Market,Pantry,Cereal & Granola,5.99,"Oats,coconut,chia,monk fruit","organic;low_sugar;vegan"
+2,Organic Granola Low Sugar,Pantry,Cereal & Granola,5.99,"Oats,coconut,chia,monk fruit","organic;low_sugar;vegan"
 ...
 ```
 
